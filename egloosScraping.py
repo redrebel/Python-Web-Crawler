@@ -9,6 +9,8 @@ import re
 from konlpy.tag import Kkma
 from collections import Counter
 import time
+from util import writer
+import operator
 
 def getPostContent(id, post):
     url = "http://api.egloos.com/" + id + "/post/" + post + ".json"
@@ -25,30 +27,11 @@ def html2text(html):
 
 
 def clearInput(input):
-    s = input.split('\n')
-    print("d : {}" , len(s))
+    input = filter((lambda x: len(x) >= 2), input)
+    return input
 
 
-def getContent(contents):
-    for content in contents:
-        p = content.get_text()
-        # clearInput(p)
-        if p == "":
-            continue
-        # print(p)
-        pp = k.nouns(p)
 
-        # print(pp)
-        for i in range(len(pp)):
-            # print(pp[i])
-            temp = pp[i]
-            if temp not in output:
-                output[temp] = 0
-            output[temp] += 1
-            # count = Counter(pp)
-            # for word, freq in count.most_common(10):
-            #    print(word, freq)
-    return output
 startTime = time.time()
 
 """
@@ -71,7 +54,8 @@ startTime = time.time()
 soup = BeautifulSoup(html, "html.parser")
 text = soup.findAll(text=True)
 print(text)
-output2 = {}
+#writer.saveTxt(text, "read/egloos.txt")
+output = {}
 
 for p in text:
     #print(p)
@@ -82,20 +66,25 @@ for p in text:
     for i in range(len(pp)):
         # print(pp[i])
         temp = pp[i]
-        if temp not in output2:
-            output2[temp] = 0
-        output2[temp] += 1
+        if len(temp) < 2:
+            continue
+        if temp not in output:
+            output[temp] = 0
+        output[temp] += 1
         # count = Counter(pp)
         # for word, freq in count.most_common(10):
         #    print(word, freq)
 
-count = Counter(output2)
-for word, freq in count.most_common(100):
+count = sorted(output.items(), key=operator.itemgetter(1), reverse=True)
+#output = clearInput(output)
+#count = Counter(output)
+for word, freq in count:
     print(word, freq)
 
 checkTime = time.time() - startTime
 print("time : ", checkTime)
 
+writer.saveCSV(count, "read/egloos.csv")
 #print(content)
 
 #text = html2text(html)

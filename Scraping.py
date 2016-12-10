@@ -14,9 +14,19 @@ import lxml
 import string
 
 logger = logging.getLogger()
+save_file_name = ""
+
+
+def set_knlpy(knlpy):
+    global k
+    k = knlpy
 
 
 def get_egloos_post_content(id, post):
+
+    global save_file_name
+    save_file_name = "egloos"
+
     url = "http://api.egloos.com/" + id + "/post/" + post + ".json"
     print(url)
     response = urlopen(url).read().decode("UTF-8")
@@ -26,16 +36,21 @@ def get_egloos_post_content(id, post):
 
     soup = BeautifulSoup(html, "html.parser")
     text = soup.findAll(text=True)
-    return text
+    scrap(text)
 
 
-def get_rss_post_content(url, max_page=100):
+def get_rss_post_content(knlpy, url, max_page=100):
+    global save_file_name
+    save_file_name = "rss"
     response = urlopen(url).read().decode("UTF-8")
-    text = xml2text(response)
-    print(text)
-    t = clearInput(text)
+    soup = BeautifulSoup(response, 'lxml')
+    text_parts = soup.findAll(text=True)
+
+    #text = xml2text(response)
+    print(text_parts)
+    t = clearInput(text_parts)
     print(t)
-    return text
+    scrap(text_parts)
 
 
 def html2text(html):
@@ -74,32 +89,15 @@ def clearInput(text):
 
 
 
-def scrap():
-    """
-    Kkma 는 nouns() 시 단어를 한번만 표시되고 속도가 느리지만 추출결과가 깔끔하다
-    Hannanum 은 nouns() 시 단어를 매번 표시되고 (빈도수체크가능) 속도가 빠르지만 추출결과가 매끄럽지 않다.
-    """
-    global k
-    k = Kkma()
-    #k = Hannanum()
-    k.nouns("intial ")
-
-    global logger
+def scrap(text):
 
     startTime = time.time()
-    checkTime = time.time() - startTime
-    logger.debug("intial time : %f", checkTime)
-    startTime = time.time()
-
-    #html = get_egloos_post_content("lennis", "6072774")
-    text = get_rss_post_content("http://blog.cjred.net/rss/")
-    #print(html)
     checkTime = time.time() - startTime
     print("network time : ", checkTime)
     startTime = time.time()
 
     print(text)
-    #writer.saveTxt(text, "read/egloos.txt")
+    writer.saveTxt(text, "read/"+save_file_name+".txt")
     output = {}
 
     for p in text:
@@ -131,9 +129,8 @@ def scrap():
     checkTime = time.time() - startTime
     print("time : ", checkTime)
 
-    writer.saveCSV(count, "read/egloos.csv")
+    writer.saveCSV(count, "read/"+save_file_name+".csv")
     #print(content)
-    #http://api.egloos.com/lennis/post/6072774.xml
 
 
 if __name__ == "__main__":

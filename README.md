@@ -11,11 +11,12 @@ Python으로 만드는 웹크롤러
 
 사용파이썬 패키지
 - [KoNLPy: 파이썬 한국어 NLP](http://konlpy.org/ko/latest/)
-    ```    
-    Kkma 는 nouns() 시 단어를 한번만 표시되고 속도가 느리지만 추출결과가 깔끔하다
-    Hannanum 은 nouns() 시 단어를 매번 표시되고 (빈도수체크가능) 속도가 빠르지만 추출결과가 매끄럽지 않다.
-    ```
+    - Kkma 는 nouns() 시 단어를 한번만 표시되고 속도가 느리지만 추출결과가 깔끔하다
+    - Hannanum 은 nouns() 시 단어를 매번 표시되고 (빈도수체크가능) 속도가 빠르지만 추출결과가 매끄럽지 않다.
+    
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
+    - pip3 install BeautifulSoup4
+    
 - [lxml]()
     - pip3 install lxml
 

@@ -8,6 +8,13 @@ import time
 
 logger = logging.getLogger()
 
+stamp = "0000"
+
+def set_time_based_stamp():
+	global stamp
+	stamp = time.strftime("%Y%m%d%I%M", time.localtime())
+	print(stamp)
+
 
 def setLogger():
 	if not os.path.exists("logs/"):
@@ -17,7 +24,7 @@ def setLogger():
 	logger.setLevel(logging.DEBUG)
 
 	formatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
-	fileHandler = logging.FileHandler("logs/scraping.log")
+	fileHandler = logging.FileHandler("logs/scraping."+stamp+".log")
 	streamHandler = logging.StreamHandler()
 
 	fileHandler.setFormatter(formatter)
@@ -44,11 +51,13 @@ def get_nlpy():
 
 # http://api.egloos.com/lennis/post/6072774.xml
 def main():
+	set_time_based_stamp()
 	setLogger()
 	k = get_nlpy()
 	Scraping.set_knlpy(k)
-	Scraping.get_rss_post_content(k, "http://blog.cjred.net/rss/")
-	#Scraping.get_egloos_post_content("lennis", "6072774")
+	Scraping.set_stamp(stamp)
+	#Scraping.get_rss_post_content(k, "http://blog.cjred.net/rss/")
+	Scraping.get_egloos_post_content("lennis", "6072774")
 
 if __name__ == "__main__":
 	main()

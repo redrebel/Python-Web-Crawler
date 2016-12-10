@@ -15,17 +15,28 @@ import string
 
 logger = logging.getLogger()
 save_file_name = ""
+stamp = ""
 
 
 def set_knlpy(knlpy):
+    if not knlpy :
+        logger.error("must have knlpy!")
+        exit()
     global k
     k = knlpy
 
 
+def set_stamp(s):
+    if not s or len(s) < 1:
+        logger.error("must have stamp!")
+        exit()
+    global stamp
+    stamp = s
+
 def get_egloos_post_content(id, post):
 
     global save_file_name
-    save_file_name = "egloos"
+    save_file_name = "egloos."+stamp
 
     url = "http://api.egloos.com/" + id + "/post/" + post + ".json"
     print(url)
@@ -41,15 +52,15 @@ def get_egloos_post_content(id, post):
 
 def get_rss_post_content(knlpy, url, max_page=100):
     global save_file_name
-    save_file_name = "rss"
+    save_file_name = "rss."+stamp
+
     response = urlopen(url).read().decode("UTF-8")
     soup = BeautifulSoup(response, 'lxml')
     text_parts = soup.findAll(text=True)
 
     #text = xml2text(response)
     print(text_parts)
-    t = clearInput(text_parts)
-    print(t)
+
     scrap(text_parts)
 
 
@@ -76,6 +87,7 @@ def filter_word(word):
 def clean_word(word):
     word = re.sub('\n', "", word)
     word = re.sub(' +', " ", word)
+    word = re.sub(']]>', "", word)
     word = re.sub('http[^ ]*', "", word)
     return word
 
@@ -87,15 +99,13 @@ def clearInput(text):
     return text
 
 
-
-
 def scrap(text):
 
     startTime = time.time()
     checkTime = time.time() - startTime
     print("network time : ", checkTime)
     startTime = time.time()
-
+    text_parts = clearInput(text)
     print(text)
     writer.saveTxt(text, "read/"+save_file_name+".txt")
     output = {}

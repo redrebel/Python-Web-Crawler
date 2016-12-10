@@ -10,27 +10,69 @@ from konlpy.tag import Kkma
 import time
 from util import writer
 import operator
-
+import lxml
+import string
 
 logger = logging.getLogger()
 
-def getPostContent(id, post):
+
+def get_egloos_post_content(id, post):
     url = "http://api.egloos.com/" + id + "/post/" + post + ".json"
     print(url)
     response = urlopen(url).read().decode("UTF-8")
     responseJson = json.loads(response)
     #print(responseJson)
-    return responseJson.get("post").get("post_content")
+    html = responseJson.get("post").get("post_content")
+
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.findAll(text=True)
+    return text
+
+
+def get_rss_post_content(url, max_page=100):
+    response = urlopen(url).read().decode("UTF-8")
+    text = xml2text(response)
+    print(text)
+    t = clearInput(text)
+    print(t)
+    return text
+
 
 def html2text(html):
     soup = BeautifulSoup(html, "html.parser")
     text_parts = soup.findAll(text=True)
-    return '\n'.join(text_parts)
+    #return '\n'.join(text_parts)
+    return text_parts
 
 
-def clearInput(input):
-    input = list(filter((lambda x: len(x) >= 2), input))
-    return input
+def xml2text(s):
+    soup = BeautifulSoup(s, 'lxml')
+    text_parts = soup.findAll(text=True)
+    #text_parts = soup.findAll("content:encoded")
+    #text_parts = soup.findAll("p")
+    return text_parts
+
+
+def filter_word(word):
+    word = re.sub('\\d', "", word)
+    return word
+
+
+def clean_word(word):
+    word = re.sub('\n', "", word)
+    word = re.sub(' +', " ", word)
+    word = re.sub('http[^ ]*', "", word)
+    return word
+
+
+def clearInput(text):
+    #text = re.sub('\[[0-9]*\]', "", text)
+    text = list(map(lambda x: clean_word(x), text))
+    text = list(filter((lambda x: len(x) >= 2), text))
+    return text
+
+
+
 
 def scrap():
     """
@@ -49,25 +91,30 @@ def scrap():
     logger.debug("intial time : %f", checkTime)
     startTime = time.time()
 
-    html = getPostContent("lennis","6072774")
+    #html = get_egloos_post_content("lennis", "6072774")
+    text = get_rss_post_content("http://blog.cjred.net/rss/")
     #print(html)
     checkTime = time.time() - startTime
     print("network time : ", checkTime)
     startTime = time.time()
 
-    soup = BeautifulSoup(html, "html.parser")
-    text = soup.findAll(text=True)
     print(text)
     #writer.saveTxt(text, "read/egloos.txt")
     output = {}
 
     for p in text:
         #print(p)
+        p = clean_word(p)
+        if len(p) < 2:
+            continue
+
         pp = k.nouns(p)
 
         pp = clearInput(pp)
         #print(pp)
         #break
+        if len(pp) == 0:
+            continue
         for i in range(len(pp)):
             # print(pp[i])
             temp = pp[i]
@@ -87,3 +134,9 @@ def scrap():
     writer.saveCSV(count, "read/egloos.csv")
     #print(content)
     #http://api.egloos.com/lennis/post/6072774.xml
+
+
+if __name__ == "__main__":
+
+    url = "http://blog.cjred.net/rss/"
+    get_rss_post_content(url)

@@ -16,7 +16,8 @@ Python으로 만드는 웹크롤러
     Hannanum 은 nouns() 시 단어를 매번 표시되고 (빈도수체크가능) 속도가 빠르지만 추출결과가 매끄럽지 않다.
     ```
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/)
-
+- [lxml]()
+    - pip3 install lxml
 
 기타
 - [Docker](https://docs.docker.com/engine/installation/mac/)

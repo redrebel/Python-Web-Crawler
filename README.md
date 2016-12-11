@@ -22,3 +22,4 @@ Python으로 만드는 웹크롤러
 
 기타
 - [Docker](https://docs.docker.com/engine/installation/mac/)
+- [PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)

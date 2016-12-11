@@ -1,5 +1,5 @@
 import logging
-
+import os, os.path
 import json
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -14,8 +14,11 @@ import lxml
 import string
 
 logger = logging.getLogger()
+save_file_path = "read/"
 save_file_name = ""
 stamp = ""
+section_idx = 0
+section_idx_padding = "0000"
 
 
 def set_knlpy(knlpy):
@@ -33,10 +36,25 @@ def set_stamp(s):
     global stamp
     stamp = s
 
+def set_section_idx(sidx):
+    if not sidx or sidx is 0:
+        logger.error("must have section_idx!")
+        exit()
+
+    global section_idx
+    section_idx = sidx
+    global section_idx_padding
+    section_idx_padding = str(section_idx).zfill(8)
+    global save_file_path
+
+    save_file_path = save_file_path + section_idx_padding + "/"
+    if not os.path.exists(save_file_path):
+        os.makedirs(save_file_path)
+
 def get_egloos_post_content(id, post):
 
     global save_file_name
-    save_file_name = "egloos."+stamp
+    save_file_name = section_idx_padding + ".egloos."+stamp
 
     url = "http://api.egloos.com/" + id + "/post/" + post + ".json"
     print(url)
@@ -52,7 +70,7 @@ def get_egloos_post_content(id, post):
 
 def get_rss_post_content(knlpy, url, max_page=100):
     global save_file_name
-    save_file_name = "rss."+stamp
+    save_file_name = section_idx_padding + ".rss."+stamp
 
     response = urlopen(url).read().decode("UTF-8")
     soup = BeautifulSoup(response, 'lxml')
@@ -105,9 +123,9 @@ def scrap(text):
     checkTime = time.time() - startTime
     print("network time : ", checkTime)
     startTime = time.time()
-    text_parts = clearInput(text)
+    text = clearInput(text)
     print(text)
-    writer.saveTxt(text, "read/"+save_file_name+".txt")
+    writer.saveTxt(text, save_file_path+save_file_name+".txt")
     output = {}
 
     for p in text:
@@ -139,11 +157,12 @@ def scrap(text):
     checkTime = time.time() - startTime
     print("time : ", checkTime)
 
-    writer.saveCSV(count, "read/"+save_file_name+".csv")
+    writer.saveCSV(count, save_file_path+save_file_name+".csv")
     #print(content)
 
 
 if __name__ == "__main__":
 
     url = "http://blog.cjred.net/rss/"
-    get_rss_post_content(url)
+    #get_rss_post_content(url)
+    set_section_idx(2)

@@ -125,7 +125,7 @@ def scrap(text):
     startTime = time.time()
     text = clearInput(text)
     print(text)
-    writer.saveTxt(text, save_file_path+save_file_name+".txt")
+    writer.save_txt(text, save_file_path+save_file_name+".txt")
     output = {}
 
     for p in text:
@@ -157,7 +157,7 @@ def scrap(text):
     checkTime = time.time() - startTime
     print("time : ", checkTime)
 
-    writer.saveCSV(count, save_file_path+save_file_name+".csv")
+    writer.save_csv(count, save_file_path+save_file_name+".csv")
     #print(content)
 
 

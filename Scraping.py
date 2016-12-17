@@ -16,9 +16,12 @@ import string
 logger = logging.getLogger()
 save_file_path = "read/"
 save_file_name = ""
-stamp = ""
 section_idx = 0
 section_idx_padding = "0000"
+
+
+def get_date_time():
+    return time.strftime("%Y%m%d%I%M", time.localtime())
 
 
 def set_knlpy(knlpy):
@@ -27,14 +30,6 @@ def set_knlpy(knlpy):
         exit()
     global k
     k = knlpy
-
-
-def set_stamp(s):
-    if not s or len(s) < 1:
-        logger.error("must have stamp!")
-        exit()
-    global stamp
-    stamp = s
 
 def set_section_idx(sidx):
     if not sidx or sidx is 0:
@@ -52,7 +47,8 @@ def set_section_idx(sidx):
         os.makedirs(save_file_path)
 
 def get_egloos_post_content(id, post):
-
+    date_time = get_date_time()
+    stamp = date_time
     global save_file_name
     save_file_name = section_idx_padding + ".egloos."+stamp
 
@@ -68,7 +64,7 @@ def get_egloos_post_content(id, post):
     scrap(text)
 
 
-def get_rss_post_content(knlpy, url, max_page=100):
+def get_rss_post_content(url, stamp):
     global save_file_name
     save_file_name = section_idx_padding + ".rss."+stamp
 
@@ -159,6 +155,17 @@ def scrap(text):
 
     writer.save_csv(count, save_file_path+save_file_name+".csv")
     #print(content)
+
+
+def proc_feed_list(feed_list):
+    date_time = time.strftime("%Y%m%d%I%M", time.localtime())
+    i = -1;
+    for line in feed_list:
+        print(line.strip())
+        i += 1
+        stamp = date_time + str(i).zfill(8)
+
+        get_rss_post_content(line, stamp)
 
 
 if __name__ == "__main__":

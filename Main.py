@@ -27,7 +27,7 @@ def setLogger():
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
-    fileHandler = logging.FileHandler("logs/scraping."+stamp+".log")
+    fileHandler = logging.FileHandler("logs/scraping.sql."+stamp+".log")
     streamHandler = logging.StreamHandler()
 
     fileHandler.setFormatter(formatter)
@@ -60,16 +60,26 @@ def get_section_idx():
     section_idx = section_map.get(COMPUTER_SECTION)
     return section_idx
 
+
+def get_feed_list():
+    feed_list = None
+    with open("feed/feedlist.txt", 'r') as f:
+        feed_list = f.readlines()
+    return feed_list
+
 # http://api.egloos.com/lennis/post/6072774.xml
 def main():
     set_time_based_stamp()
     setLogger()
     k = get_nlpy()
     Scraping.set_knlpy(k)
-    Scraping.set_stamp(stamp)
+    #Scraping.set_stamp(stamp)
     section_idx = get_section_idx()
     Scraping.set_section_idx(section_idx)
-    Scraping.get_rss_post_content(k, "http://blog.cjred.net/rss/")
+
+    feed_list = get_feed_list()
+    Scraping.proc_feed_list(feed_list)
+    #Scraping.get_rss_post_content(k, "http://blog.cjred.net/rss/")
     #Scraping.get_egloos_post_content("lennis", "6072774")
 
 if __name__ == "__main__":

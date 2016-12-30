@@ -11,25 +11,16 @@ import re
 import time
 from util import writer
 import operator
-
+from Scraping import Scraping
 
 logger = logging.getLogger()
 
-
-class KorCrawler:
-
-    logger = logging.getLogger()
-    save_file_path = "read/"
-    save_file_name = ""
-    # section_id = 0
-    # section_id_padding = "0000"
+class KorCrawler(Scraping):
 
     def __init__(self):
-        pass
         self.set_knlpy()
 
     def proc(self, sid, feed_list):
-        # Scraping.set_stamp(stamp)
         self.set_section_id(sid)
         startTime = time.time()
         self.proc_feed_list(feed_list)
@@ -37,9 +28,6 @@ class KorCrawler:
         # self.get_egloos_post_content("lennis", "6072774")
         checkTime = time.time() - startTime
         logger.debug("work time : %f", checkTime)
-
-    def get_date_time(self):
-        return time.strftime("%Y%m%d%I%M", time.localtime())
 
     def set_knlpy(self):
         """
@@ -58,17 +46,6 @@ class KorCrawler:
         checkTime = time.time() - startTime
         logger.debug("intial time : %f", checkTime)
 
-    def set_section_id(self, sid):
-        if not sid or sid is 0:
-            logger.error("must have section_id!")
-            exit()
-        self.section_id = sid
-        self.section_id_padding = str(self.section_id).zfill(8)
-
-        self.save_file_path = self.save_file_path + self.section_id_padding + "/"
-        print("save_file_path : ", self.save_file_path)
-        if not os.path.exists(self.save_file_path):
-            os.makedirs(self.save_file_path)
 
     def get_egloos_post_content(self, id, post):
         date_time = self.get_date_time()
@@ -86,67 +63,9 @@ class KorCrawler:
         text = soup.findAll(text=True)
         self.scrap(text)
 
-    def get_rss_post_content(self, rss_url, stamp):
-        """
-        rss 주소에서 글을 읽어와서 리턴한다.
-        :param rss_url:
-        :param stamp:
-        :return:
-        """
-        self.save_file_name = self.section_id_padding + ".rss."+stamp
-        logger.debug("get : %s", rss_url)
-        response = urlopen(rss_url).read().decode("UTF-8")
-        soup = BeautifulSoup(response, 'lxml')
-        text_parts = soup.findAll(text=True)
-        print(text_parts)
-
-        self.scrap(text_parts)
-
-    def proc_feed_list(self, feed_list):
-        """
-        feed 목록을 받아서 처리한다
-        :param feed_list:
-        :return:
-        """
-        date_time = time.strftime("%Y%m%d%I%M", time.localtime())
-        i = -1;
-        for line in feed_list:
-            line = line.strip()
-            print(line)
-            i += 1
-            stamp = date_time + str(i).zfill(8)
-
-            self.get_rss_post_content(line, stamp)
-
-    def html2text(self, html):
-        soup = BeautifulSoup(html, "html.parser")
-        text_parts = soup.findAll(text=True)
-        # return '\n'.join(text_parts)
-        return text_parts
-
-    def xml2text(self, s):
-        soup = BeautifulSoup(s, 'lxml')
-        text_parts = soup.findAll(text=True)
-        # text_parts = soup.findAll("content:encoded")
-        # text_parts = soup.findAll("p")
-        return text_parts
-
     def filter_word(self, word):
         word = re.sub('\\d', "", word)
         return word
-
-    def clean_word(self, word):
-        word = re.sub('\n', "", word)
-        word = re.sub(' +', " ", word)
-        word = re.sub(']]>', "", word)
-        word = re.sub('http[^ ]*', "", word)
-        return word
-
-    def clearInput(self, text):
-        # text = re.sub('\[[0-9]*\]', "", text)
-        text = list(map(lambda x: self.clean_word(x), text))
-        text = list(filter((lambda x: len(x) >= 2), text))
-        return text
 
     def scrap(self, text):
         startTime = time.time()
@@ -175,19 +94,14 @@ class KorCrawler:
                     output[temp] = 0
                 output[temp] += 1
 
-        print("output :", output)
-        count = sorted(output.items(), key=operator.itemgetter(1), reverse=True)
-        print("count :", count)
-        for word, freq in count:
-            print(word, freq)
-
         checkTime = time.time() - startTime
         print("time : ", checkTime)
 
-        writer.save_csv(count, self.save_file_path+self.save_file_name+".csv")
+        print("output :", output)
+        data = self.get_sorted_data(output)
+        self.save_csv(data)
+
         # print(content)
-
-
 
 
 if __name__ == "__main__":

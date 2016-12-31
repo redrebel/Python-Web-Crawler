@@ -44,7 +44,7 @@ SHOW INDEX FROM cnts;
 
 ALTER DATABASE scraping CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 ALTER TABLE keywords CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-ALTER TABLE eng_words CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+ALTER TABLE eng_keywords CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 
 SELECT character_set_name FROM information_schema.`COLUMNS` C
@@ -54,5 +54,5 @@ WHERE table_schema = "scraping"
 
 SELECT character_set_name FROM information_schema.`COLUMNS` C
 WHERE table_schema = "scraping"
-  AND table_name = "eng_words"
+  AND table_name = "eng_keywords"
   AND column_name = "keyword";

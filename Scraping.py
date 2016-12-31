@@ -1,17 +1,18 @@
 import logging
 import os
 import os.path
-import json
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from konlpy.utils import pprint
+import feedparser
 import re
 import time
 from util import writer
 import operator
+
 from abc import ABCMeta, abstractmethod
 
 logger = logging.getLogger()
+
 
 class Scraping:
     __metaclass__ = ABCMeta # 추상클래스로 선언
@@ -19,6 +20,14 @@ class Scraping:
     save_file_name = ""
 
     def __init__(self):
+        pass
+
+    @abstractmethod  # 추상메소드 선언
+    def scrap(self, text):
+        pass
+
+    @abstractmethod
+    def proc(self, sid, feed_list):
         pass
 
     def set_section_id(self, sid):
@@ -34,13 +43,44 @@ class Scraping:
             os.makedirs(self.save_file_path)
 
     def get_date_time(self):
-        return time.strftime("%Y%m%d%I%M", time.localtime())
+        return time.strftime("%Y%m%d%H%M", time.localtime())
 
-    @abstractmethod  # 추상메소드 선언
-    def scrap(self, text_parts):
-        pass
+    def get_feed_post_content(self, rss_url, stamp):
+        self.save_file_name = self.section_id_padding + ".rss."+stamp
+        logger.debug("get : %s", rss_url)
+
+        # Parse the feed
+        d = feedparser.parse(rss_url)
+        self.scrap(d)
+
+    def proc_feed_list(self, feed_list):
+        i = -1;
+        feedlist = []
+        for line in feed_list:
+            line = line.strip()
+            logger.debug('get : %s', line)
+            i += 1
+            stamp = self.get_date_time() + str(i).zfill(8)
+            self.get_feed_post_content(line, stamp)
 
     def get_rss_post_content(self, rss_url, stamp):
+        """
+        rss 주소에서 글을 읽어와서 리턴한다.
+        :param rss_url:
+        :param stamp:
+        :return:
+        """
+        self.save_file_name = self.section_id_padding + ".rss."+stamp
+        logger.debug("get : %s", rss_url)
+        response = urlopen(rss_url).read().decode("UTF-8")
+        soup = BeautifulSoup(response, 'lxml')
+        # print("soup : ", soup)
+        text_parts = soup.findAll(text=True)
+        print(text_parts)
+
+        self.scrap(text_parts)
+
+    def get_rss_post_content_(self, rss_url, stamp):
         """
         rss 주소에서 글을 읽어와서 리턴한다.
         :param rss_url:
@@ -56,9 +96,9 @@ class Scraping:
 
         self.scrap(text_parts)
 
-    def proc_feed_list(self, feed_list):
+    def proc_rss_list(self, feed_list):
         """
-        feed 목록을 받아서 처리한다
+        source_list 목록을 받아서 처리한다
         :param feed_list:
         :return:
         """
@@ -92,8 +132,10 @@ class Scraping:
         return word
 
     def clearInput(self, text):
+        # print('before text : ', text)
         # text = re.sub('\[[0-9]*\]', "", text)
         text = list(map(lambda x: self.clean_word(x), text))
+        # print('after text : ', text)
         text = list(filter((lambda x: len(x) >= 2), text))
         return text
 
@@ -108,8 +150,11 @@ class Scraping:
         writer.save_csv(data, self.save_file_path+self.save_file_name+".csv")
 
 
+
 if __name__ == "__main__":
 
     url = "http://blog.cjred.net/rss/"
     # get_rss_post_content(url)
     # set_section_id(2)
+
+    d = feedparser.parse('http://code.tutsplus.com/posts.atom')

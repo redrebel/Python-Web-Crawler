@@ -49,15 +49,14 @@ def get_section_id(section):
     return section_idx
 
 
-def get_feed_list(file_path):
+def get_source_list(file_path):
+    source_list = []
     with open(file_path, 'r') as f:
-        feed_list = f.readlines()
-    return feed_list
-
-
-def proc_eng(section_idx):
-
-    print(section_idx)
+        for line in f.readlines():
+            if line[0] != '#':
+                source_list.append(line)
+        # source_list = f.readlines()
+    return source_list
 
 
 def main():
@@ -67,18 +66,30 @@ def main():
     config = configparser.ConfigParser()
     config.read('config.conf')
 
-    mode = config.get('Default', 'mode')
-    section = config.get('Default', 'section')
+    default = 'Default'
+    mode = config.get(default, 'mode')
+    section = config.get(default, 'section')
     section_id = get_section_id(section)
-    file_path = config.get(mode, 'feed_list_file')
-    feed_list = get_feed_list(file_path)
+    source_type = config.get(default, 'type')
+    if source_type == 'RSS':
+        list_file = 'feed_list_file'
+    elif source_type == 'EGLOOS':
+        list_file = 'egloos_list_file'
+    elif source_type == 'HTML':
+        list_file = 'html_list_file'
+    else:
+        print('Unknown source type')
+        exit()
+
+    file_path = config.get(mode, list_file)
+    source_list = get_source_list(file_path)
     print('mode : ', mode)
     if mode == 'KOR':
         cl = KorCrawler()
-        cl.proc(section_id, feed_list)
+        cl.proc(section_id, source_type, source_list)
     elif mode == 'ENG':
         cl = EngCrawler()
-        cl.proc(section_id, feed_list)
+        cl.proc(section_id, source_type, source_list)
     else:
         print('unknown language.')
 

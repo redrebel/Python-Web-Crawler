@@ -20,14 +20,16 @@ class KorCrawler(Scraping):
     def __init__(self):
         self.set_knlpy()
 
-    def proc(self, sid, feed_list):
-        self.set_section_id(sid)
+    def proc(self, section_id, source_type, source_list):
+        self.set_section_id(section_id)
         startTime = time.time()
-        self.proc_feed_list(feed_list)
-        # self.get_rss_post_content("http://blog.cjred.net/rss/", "00")
-        # self.get_egloos_post_content("lennis", "6072774")
-        checkTime = time.time() - startTime
-        logger.debug("work time : %f", checkTime)
+        if source_type == 'RSS':
+            self.proc_rss_list(source_list)
+        elif source_type == 'EGLOOS':
+            self.get_egloos_post_content("lennis", "6072774")
+        elif source_type == 'HTML':
+            pass
+
 
     def set_knlpy(self):
         """
@@ -46,10 +48,8 @@ class KorCrawler(Scraping):
         checkTime = time.time() - startTime
         logger.debug("intial time : %f", checkTime)
 
-
     def get_egloos_post_content(self, id, post):
-        date_time = self.get_date_time()
-        stamp = date_time
+        stamp = self.get_date_time() + id + '_' + post
         self.save_file_name = self.section_id_padding + ".egloos."+stamp
 
         api_url = "http://api.egloos.com/" + id + "/post/" + post + ".json"

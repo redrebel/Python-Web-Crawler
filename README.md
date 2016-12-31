@@ -22,4 +22,6 @@ Python으로 만드는 웹크롤러
 
 기타
 - [Docker](https://docs.docker.com/engine/installation/mac/)
+    - docker exec -it mysql bash
+    - mysql -p[password] -h 172.17.0.2 -P 3306
 - [PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)

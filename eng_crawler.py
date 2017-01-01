@@ -35,7 +35,12 @@ class EngCrawler(Scraping):
         checkTime = time.time() - startTime
         logger.debug("work time : %f", checkTime)
 
-    def scrap(self, text):
+    def scrap_(self, text):
+        '''
+        일반적으로 단어로 쪼개서 처리한다
+        :param text:
+        :return:
+        '''
         txt = [text.feed.title]
         wc = {}
         # Loop over all the entries
@@ -71,35 +76,60 @@ class EngCrawler(Scraping):
         print('i : ', i, " txt : ", text)
         count = sorted(wc.items(), key=operator.itemgetter(1), reverse=True)
         print(text.feed.title, count)
-        # self.scrap(text)
+        writer.save_eng_db(count, self.section_id)
 
-
-    def scrap_nltk(self, text):
-        doc_en = "For projects that support research infrastructure and tools, such as vessels, facilities, and telescopes, the project/performance site should correspond to the physical location of the research asset. For research assets or projects that are geographically distributed, the proposer should report information for the primary site, as defined by the proposer. For example, proposals for the operations and maintenance of research vessels may list the project/performance site as the vessel’s home port."
-        startTime = time.time()
-        text = self.clearInput(text)
-
-        print('text : ', text)
+    def scrap(self, text):
+        '''
+        자연어처리를 통하여 명사만 처리한다
+        :param text:
+        :return:
+        '''
+        txt = [text.feed.title]
         nouns = ['NN', 'NNS', 'NNP', 'NNPS']
+
         output = {}
+        # Loop over all the entries
+        i = 0
+        for e in text.entries:
+            if 'content' in e:
+                # print('content : ', e.content)
+                content = e.content[0].get('value')
+            elif 'description' in e:
+                print('description')
+                content = e.description
+            else:
+                print('summary')
+                content = e.summary
+            i += 1
+            # print e
+            # Extract a list of words
+            # Remove all the HTML tags
+            # print('before txt : ', content)
+            content = re.compile(r'<[^>]+>').sub('', content)
+            content = self.clean_word(content)
+            content = content.strip()
+            # content = re.sub(' +', '', content)
+            print('after : [', content,']')
+            txt.append(content)
+            # content = self.clearInput(content)
+            sentences = sent_tokenize(content)
+            for sentence in sentences:
+                # print(sentence)
+                taggedWords = pos_tag(word_tokenize(sentence))
+                for word in taggedWords:
+                    if word[1] in nouns:
+                        temp = word[0]
+                        # print(temp)
+                        if temp not in output:
+                            output[temp] = 0
+                        output[temp] += 1
 
-        sentences = sent_tokenize(text);
-        for sentence in sentences:
-            #print(sentence)
-            taggedWords = pos_tag(word_tokenize(sentence))
-            for word in taggedWords:
-                if word[1] in nouns:
-                    temp = word[0]
-                    #print(temp)
-                    if temp not in output:
-                        output[temp] = 0
-                    output[temp] += 1
+        self.save_txt(txt)
+        print(text.feed.title, output)
+        output = self.get_sorted_data(output)
+        self.save_csv(output)
+        self.save_eng_db(output)
 
-        print(output)
-        count = sorted(output.items(), key=operator.itemgetter(1), reverse=True)
-        print("count :", count)
-        #for word, freq in count:
-        #    print(word, freq)
 
 def main():
     cl = EngCrawler()

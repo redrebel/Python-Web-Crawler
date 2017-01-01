@@ -18,6 +18,8 @@ class Scraping:
     __metaclass__ = ABCMeta # 추상클래스로 선언
     save_file_path = "read/"
     save_file_name = ""
+    section_id = None
+    section_id_padding = None
 
     def __init__(self):
         pass
@@ -142,14 +144,21 @@ class Scraping:
     def get_sorted_data(self,output):
         count = sorted(output.items(), key=operator.itemgetter(1), reverse=True)
         print("count :", count)
-        for word, freq in count:
-            print(word, freq)
+        # for word, freq in count:
+        #     print(word, freq)
         return count
+
+    def save_txt(self, data):
+        writer.save_txt(data, self.save_file_path + self.save_file_name + ".txt")
 
     def save_csv(self, data):
         writer.save_csv(data, self.save_file_path+self.save_file_name+".csv")
 
+    def save_eng_db(self, data):
+        writer.save_eng_db(data, self.section_id)
 
+    def save_kor_db(self, data):
+        writer.save_kor_db(data, self.section_id)
 
 if __name__ == "__main__":
 

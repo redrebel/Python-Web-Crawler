@@ -1,6 +1,4 @@
 import logging
-import os
-import os.path
 import json
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
@@ -9,8 +7,6 @@ from konlpy.tag import Hannanum
 from konlpy.utils import pprint
 import re
 import time
-from util import writer
-import operator
 from Scraping import Scraping
 
 logger = logging.getLogger()
@@ -70,8 +66,7 @@ class KorCrawler(Scraping):
     def scrap(self, text):
         startTime = time.time()
         text = self.clearInput(text)
-        print(text)
-        writer.save_txt(text, self.save_file_path+self.save_file_name+".txt")
+        self.save_txt(text)
         output = {}
 
         for p in text:
@@ -100,6 +95,7 @@ class KorCrawler(Scraping):
         print("output :", output)
         data = self.get_sorted_data(output)
         self.save_csv(data)
+
 
         # print(content)
 

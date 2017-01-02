@@ -3,7 +3,7 @@ import os
 import os.path
 import configparser
 import time
-
+from db import dao
 from eng_crawler import EngCrawler
 from kor_crawler import KorCrawler
 
@@ -11,9 +11,6 @@ from kor_crawler import KorCrawler
 logger = logging.getLogger()
 stamp = "0000"
 DEFAULT_LOG_PATH = "logs/"
-COMPUTER_SECTION = "COMPUTER"
-FASION_SECTION = "FASION"
-DEFAULT_SCRAPING_SECTION = COMPUTER_SECTION
 
 
 def set_time_based_stamp():
@@ -40,15 +37,6 @@ def set_logger():
     logger.addHandler(stream_handler)
 
 
-def get_section_id(section):
-    """
-    나중에 DB와 연동하여 세션아이디를 가져오는것으로 수정예정
-    """
-    section_map = {"COMPUTER": 1, "FASION": 2}
-    section_idx = section_map.get(section)
-    return section_idx
-
-
 def get_source_list(file_path):
     source_list = []
     with open(file_path, 'r') as f:
@@ -69,7 +57,12 @@ def main():
     default = 'Default'
     mode = config.get(default, 'mode')
     section = config.get(default, 'section')
-    section_id = get_section_id(section)
+    section_id = dao.get_section_id(section)
+    if section_id is None:
+        print('Unknown section')
+        exit()
+    print(section_id)
+    exit()
     source_type = config.get(default, 'type')
     if source_type == 'RSS':
         list_file = 'feed_list_file'

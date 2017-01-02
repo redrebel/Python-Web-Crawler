@@ -7,6 +7,7 @@ import feedparser
 import re
 import time
 from util import writer
+from db import dao
 import operator
 
 from abc import ABCMeta, abstractmethod
@@ -155,10 +156,10 @@ class Scraping:
         writer.save_csv(data, self.save_file_path+self.save_file_name+".csv")
 
     def save_eng_db(self, data):
-        writer.save_eng_db(data, self.section_id)
+        dao.save_db(data, self.section_id, 'ENG')
 
     def save_kor_db(self, data):
-        writer.save_kor_db(data, self.section_id)
+        dao.save_db(data, self.section_id, 'KOR')
 
 if __name__ == "__main__":
 

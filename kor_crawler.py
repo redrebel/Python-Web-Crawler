@@ -95,6 +95,7 @@ class KorCrawler(Scraping):
         print("output :", output)
         data = self.get_sorted_data(output)
         self.save_csv(data)
+        self.save_kor_db(data)
 
 
         # print(content)

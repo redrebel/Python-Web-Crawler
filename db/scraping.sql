@@ -25,7 +25,7 @@ CREATE TABLE cnts (
   keyword_id INTEGER UNSIGNED NOT NULL ,
   section_id INTEGER UNSIGNED NOT NULL ,
   cnt INTEGER UNSIGNED DEFAULT 0,
-  UNIQUE INDEX idx1(keyword_id),
+  UNIQUE INDEX idx1(section_id, keyword_id),
   FOREIGN KEY (keyword_id) REFERENCES keywords (id),
   FOREIGN KEY (section_id) REFERENCES sections (id)
 );
@@ -35,7 +35,7 @@ CREATE TABLE eng_cnts (
   keyword_id INTEGER UNSIGNED NOT NULL ,
   section_id INTEGER UNSIGNED NOT NULL ,
   cnt INTEGER UNSIGNED DEFAULT 0,
-  UNIQUE INDEX idx1(keyword_id),
+  UNIQUE INDEX idx1(section_id, keyword_id),
   FOREIGN KEY (keyword_id) REFERENCES eng_keywords (id),
   FOREIGN KEY (section_id) REFERENCES sections (id)
 );
@@ -56,3 +56,15 @@ SELECT character_set_name FROM information_schema.`COLUMNS` C
 WHERE table_schema = "scraping"
   AND table_name = "eng_keywords"
   AND column_name = "keyword";
+
+-- section 정보 insert
+INSERT INTO sections(section)  values('COMPUTER');
+INSERT INTO sections(section)  values('FASHION');
+
+select * from eng_keywords;
+SELECT * FROM sections;
+SELECT * FROM eng_cnts;
+
+-- table 정보 삭제
+DELETE From eng_cnts;
+DELETE from eng_keywords;

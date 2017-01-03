@@ -1,0 +1,2 @@
+http://www.gq.com/services/rss/feeds/latest.xml
+http://feeds.gawker.com/lifehacker/vip

@@ -39,6 +39,7 @@ CREATE TABLE eng_cnts (
   FOREIGN KEY (keyword_id) REFERENCES eng_keywords (id),
   FOREIGN KEY (section_id) REFERENCES sections (id)
 );
+-- // 테이블생성
 
 SHOW INDEX FROM cnts;
 
@@ -62,8 +63,15 @@ INSERT INTO sections(section)  values('COMPUTER');
 INSERT INTO sections(section)  values('FASHION');
 
 select * from eng_keywords;
-SELECT * FROM sections;
+select * from keywords
+where 1>0
+-- and id in (708,3)
+and keyword='사용'
+ORDER BY id ASC;
+
+SELECT * FROM sections where section ='FASHION';
 SELECT * FROM eng_cnts;
+SELECT * FROM cnts ORDER BY cnt DESC ;
 
 -- table 정보 삭제
 DELETE From eng_cnts;

@@ -1,3 +1,4 @@
 #http://blog.cjred.net/rss/1
 #http://blog.cjred.net/rss/2
-http://blog.cjred.net/rss/3
+#http://blog.cjred.net/rss/3
+http://blog.cjred.net/rss/4

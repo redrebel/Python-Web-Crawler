@@ -35,9 +35,11 @@ class EngCrawler(Scraping):
         self.set_section_id(section_id)
         startTime = time.time()
         if source_type == 'RSS':
-            self.proc_feed_list(source_list)
+            self.proc_list(source_list, type=self.get_feed_post_content)
         elif source_type == 'EGLOOS':
             self.get_egloos_post_content("lennis", "6072774")
+        elif source_type == 'TEXT':
+            self.proc_list(source_list, type=self.proc_text_content)
         elif source_type == 'HTML':
             pass
 
@@ -93,23 +95,12 @@ class EngCrawler(Scraping):
         :param text:
         :return:
         '''
-        txt = [text.feed.title]
+        self.save_txt(text)
         nouns = ['NN', 'NNS', 'NNP', 'NNPS']
 
         output = {}
         # Loop over all the entries
-        i = 0
-        for e in text.entries:
-            if 'content' in e:
-                # print('content : ', e.content)
-                content = e.content[0].get('value')
-            elif 'description' in e:
-                print('description')
-                content = e.description
-            else:
-                print('summary')
-                content = e.summary
-            i += 1
+        for content in text:
             # print e
             # Extract a list of words
             # Remove all the HTML tags
@@ -119,7 +110,7 @@ class EngCrawler(Scraping):
             content = content.strip()
             # content = re.sub(' +', '', content)
             print('after : [', content,']')
-            txt.append(content)
+            # txt.append(content)
             # content = self.clearInput(content)
             sentences = sent_tokenize(content)
             for sentence in sentences:
@@ -135,8 +126,7 @@ class EngCrawler(Scraping):
                             output[temp] = 0
                         output[temp] += 1
 
-        self.save_txt(txt)
-        print(text.feed.title, output)
+        print(text[0], output)
         output = self.get_sorted_data(output)
         self.save_csv(output)
         self.save_eng_db(output)

@@ -19,6 +19,8 @@ class Config:
             _list_file = 'egloos_list_file'
         elif _source_type == 'HTML':
             _list_file = 'html_list_file'
+        elif _source_type == 'TEXT':
+            _list_file = 'text_list_file'
         else:
             print('Unknown source type')
             exit()

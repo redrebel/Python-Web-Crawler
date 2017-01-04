@@ -58,7 +58,7 @@ class Scraping:
         _filter_words = []
         with open(file_path, 'r') as f:
             for line in f.readlines():
-                if line[0] != '#': _filter_words.append(line.strip())
+                if line[0] != '#' and line != '\n': _filter_words.append(line.strip())
 
         self.filter_words = _filter_words
         print(self.filter_words)
@@ -69,16 +69,19 @@ class Scraping:
 
         # Parse the feed
         d = feedparser.parse(rss_url)
-        self.scrap(d)
-
-    def proc_feed_list(self, feed_list):
-        i = -1;
-        feedlist = []
-        for line in feed_list:
-            logger.debug('get : %s', line)
-            i += 1
-            stamp = self.get_date_time() + str(i).zfill(8)
-            self.get_feed_post_content(line, stamp)
+        text_part = [d.feed.title]
+        for e in d.entries:
+            if 'content' in e:
+                # print('content : ', e.content)
+                content = e.content[0].get('value')
+            elif 'description' in e:
+                # print('description')
+                content = e.description
+            else:
+                # print('summary')
+                content = e.summary
+            text_part.append(content)
+        return text_part
 
     def get_rss_post_content(self, rss_url, stamp):
         """
@@ -95,37 +98,31 @@ class Scraping:
         text_parts = soup.findAll(text=True)
         print(text_parts)
 
-        self.scrap(text_parts)
+        return text_parts
 
-    def get_rss_post_content_(self, rss_url, stamp):
-        """
-        rss 주소에서 글을 읽어와서 리턴한다.
-        :param rss_url:
-        :param stamp:
-        :return:
-        """
-        self.save_file_name = self.section_id_padding + ".rss."+stamp
-        logger.debug("get : %s", rss_url)
-        response = urlopen(rss_url).read().decode("UTF-8")
-        soup = BeautifulSoup(response, 'lxml')
-        text_parts = soup.findAll(text=True)
-        print(text_parts)
+    def proc_text_content(self, file_path, stamp):
+        text = []
+        self.save_file_name = self.section_id_padding + ".text." + stamp
+        with open(file_path, 'r') as f:
+            text = f.readlines()
 
-        self.scrap(text_parts)
+        return text
 
-    def proc_rss_list(self, feed_list):
+    def proc_list(self, source_list, type):
         """
         source_list 목록을 받아서 처리한다
-        :param feed_list:
+        :param source_list:
         :return:
         """
         i = -1;
-        for line in feed_list:
+        for line in source_list:
             print(line)
             i += 1
             stamp = self.get_date_time() + str(i).zfill(8)
 
-            self.get_rss_post_content(line, stamp)
+            text = type(line, stamp)
+            text = self.clearInput(text)
+            self.scrap(text)
 
     def html2text(self, html):
         soup = BeautifulSoup(html, "html.parser")

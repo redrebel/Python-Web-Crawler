@@ -23,7 +23,7 @@ class KorCrawler(Scraping):
         self.set_section_id(section_id)
         startTime = time.time()
         if source_type == 'RSS':
-            self.proc_rss_list(source_list)
+            self.proc_list(source_list, type=self.get_rss_post_content)
         elif source_type == 'EGLOOS':
             self.get_egloos_post_content("lennis", "6072774")
         elif source_type == 'HTML':
@@ -69,7 +69,6 @@ class KorCrawler(Scraping):
 
     def scrap(self, text):
         startTime = time.time()
-        text = self.clearInput(text)
         self.save_txt(text)
         output = {}
 

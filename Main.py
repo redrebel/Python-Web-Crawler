@@ -41,7 +41,7 @@ def get_source_list(file_path):
     source_list = []
     with open(file_path, 'r') as f:
         for line in f.readlines():
-            if line[0] != '#':
+            if line[0] != '#' and line != '\n':
                 source_list.append(line.strip())
     return source_list
 

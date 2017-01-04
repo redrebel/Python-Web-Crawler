@@ -6,7 +6,7 @@ import time
 from db import dao
 from eng_crawler import EngCrawler
 from kor_crawler import KorCrawler
-
+from config import Config
 
 logger = logging.getLogger()
 stamp = "0000"
@@ -42,8 +42,7 @@ def get_source_list(file_path):
     with open(file_path, 'r') as f:
         for line in f.readlines():
             if line[0] != '#':
-                source_list.append(line)
-        # source_list = f.readlines()
+                source_list.append(line.strip())
     return source_list
 
 
@@ -51,38 +50,16 @@ def main():
     set_time_based_stamp()
     set_logger()
 
-    config = configparser.ConfigParser()
-    config.read('config.conf')
-
-    default = 'Default'
-    mode = config.get(default, 'mode')
-    section = config.get(default, 'section')
-    section_id = dao.get_section_id(section)
-    if section_id is None:
-        print('Unknown section')
-        exit()
-    print(section_id)
-    exit()
-    source_type = config.get(default, 'type')
-    if source_type == 'RSS':
-        list_file = 'feed_list_file'
-    elif source_type == 'EGLOOS':
-        list_file = 'egloos_list_file'
-    elif source_type == 'HTML':
-        list_file = 'html_list_file'
-    else:
-        print('Unknown source type')
-        exit()
-
-    file_path = config.get(mode, list_file)
-    source_list = get_source_list(file_path)
-    print('mode : ', mode)
-    if mode == 'KOR':
+    Config.load('config.conf')
+    section_id = dao.get_section_id(Config.section)
+    source_list = get_source_list(Config.file_path)
+    print('mode : ', Config.mode)
+    if Config.mode == 'KOR':
         cl = KorCrawler()
-        cl.proc(section_id, source_type, source_list)
-    elif mode == 'ENG':
+        cl.proc(section_id, Config.source_type, source_list)
+    elif Config.mode == 'ENG':
         cl = EngCrawler()
-        cl.proc(section_id, source_type, source_list)
+        cl.proc(section_id, Config.source_type, source_list)
     else:
         print('unknown language.')
 

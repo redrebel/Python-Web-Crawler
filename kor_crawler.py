@@ -11,10 +11,13 @@ from Scraping import Scraping
 
 logger = logging.getLogger()
 
+
 class KorCrawler(Scraping):
 
     def __init__(self):
         self.set_knlpy()
+        self.set_filter_words('source_list/KOR/KOR_filterwords.txt')
+        pass
 
     def proc(self, section_id, source_type, source_list):
         self.set_section_id(section_id)
@@ -59,8 +62,9 @@ class KorCrawler(Scraping):
         text = soup.findAll(text=True)
         self.scrap(text)
 
-    def filter_word(self, word):
+    def filter_word_(self, word):
         word = re.sub('\\d', "", word)
+        word = re.sub('사용', "", word)
         return word
 
     def scrap(self, text):
@@ -76,8 +80,11 @@ class KorCrawler(Scraping):
                 continue
 
             pp = self.k.nouns(p)
+            pp = list(map(lambda x: self.clean_word(x), pp))
+            pp = list(filter(lambda x: self.filter_word(x), pp))
+            # print('after text : ', text)
+            pp = list(filter((lambda x: len(x) >= 2), pp))
 
-            pp = self.clearInput(pp)
             # print(pp)
             # break
             if len(pp) == 0:
@@ -104,5 +111,7 @@ class KorCrawler(Scraping):
 if __name__ == "__main__":
 
     url = "http://blog.cjred.net/rss/"
+    cl = KorCrawler()
+    print(cl.filter_word('경우'))
     # get_rss_post_content(url)
     # set_section_id(2)

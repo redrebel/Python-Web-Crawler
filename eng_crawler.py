@@ -11,14 +11,23 @@ logger = logging.getLogger()
 
 
 def getwords(txt):
+    '''
+    단순히 문자열을 단어별로 나눈다.
+    :param txt:
+    :return:
+    '''
     # print(txt)
     # Split words by all non-alpha characters
     words = re.compile(r'[^A-Z^a-z]+').split(txt)
     # Convert to lowercase
-    return [word.lower() for word in words if word != '']
+    return [word.lower() for word in words if word not in ['', 'time']]
 
 
 class EngCrawler(Scraping):
+
+    def __init__(self):
+        self.set_filter_words('source_list/ENG/ENG_filterwords.txt')
+
     # Return title and dictionary of word counts for an RSS feed
 
     def proc(self, section_id, source_type, source_list):
@@ -116,8 +125,10 @@ class EngCrawler(Scraping):
             for sentence in sentences:
                 # print(sentence)
                 taggedWords = pos_tag(word_tokenize(sentence))
+
                 for word in taggedWords:
-                    if word[1] in nouns:
+                    if word[1] in nouns and self.filter_word(word[0]):
+
                         temp = word[0]
                         # print(temp)
                         if temp not in output:

@@ -23,6 +23,7 @@ class Scraping:
     section_id_padding = None
 
     def __init__(self):
+        self.filter_words = None
         pass
 
     @abstractmethod  # 추상메소드 선언
@@ -48,6 +49,20 @@ class Scraping:
     def get_date_time(self):
         return time.strftime("%Y%m%d%H%M", time.localtime())
 
+    def filter_word(self, word):
+        if bool(re.search('\\d', word)) is True: return False
+        if word in self.filter_words: return False
+        return True
+
+    def set_filter_words(self, file_path):
+        _filter_words = []
+        with open(file_path, 'r') as f:
+            for line in f.readlines():
+                if line[0] != '#': _filter_words.append(line.strip())
+
+        self.filter_words = _filter_words
+        print(self.filter_words)
+
     def get_feed_post_content(self, rss_url, stamp):
         self.save_file_name = self.section_id_padding + ".rss."+stamp
         logger.debug("get : %s", rss_url)
@@ -60,7 +75,6 @@ class Scraping:
         i = -1;
         feedlist = []
         for line in feed_list:
-            line = line.strip()
             logger.debug('get : %s', line)
             i += 1
             stamp = self.get_date_time() + str(i).zfill(8)
@@ -107,7 +121,6 @@ class Scraping:
         """
         i = -1;
         for line in feed_list:
-            line = line.strip()
             print(line)
             i += 1
             stamp = self.get_date_time() + str(i).zfill(8)
@@ -132,6 +145,7 @@ class Scraping:
         word = re.sub(' +', " ", word)
         word = re.sub(']]>', "", word)
         word = re.sub('http[^ ]*', "", word)
+
         return word
 
     def clearInput(self, text):

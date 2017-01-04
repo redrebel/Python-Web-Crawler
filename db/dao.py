@@ -65,6 +65,7 @@ def save_db(data, section_id, lang):
             cur.execute(sql, (keyword_id, section_id, cnt, cnt))
 
         conn.commit()
+        logger.debug('DB save OK')
     except Exception as e:
         logger.error("error : ", str(e))
         # Rollback in case there is any error

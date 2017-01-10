@@ -62,7 +62,10 @@ WHERE table_schema = "scraping"
 INSERT INTO sections(section)  values('COMPUTER');
 INSERT INTO sections(section)  values('FASHION');
 
-select * from eng_keywords  ;
+select * from eng_keywords
+where 1>0
+ and id in (176, 877)
+;
 select * from keywords
 where 1>0
 -- and id in (708,3)
@@ -70,10 +73,23 @@ and keyword='사용'
 ORDER BY id ASC;
 
 SELECT * FROM sections where section ='FASHION';
-SELECT * FROM eng_cnts ORDER BY cnt DESC;
+SELECT * FROM eng_cnts
+where 1>0
+  and keyword_id in (133)
+ORDER BY cnt DESC;
 SELECT * FROM cnts ORDER BY cnt DESC ;
 
 -- table 정보 삭제
-DELETE From eng_cnts;
+DELETE From eng_cnts
+where keyword_id=877;
 DELETE from eng_keywords;
 COMMIT;
+
+
+
+SELECT keyword_id, cnt FROM eng_cnts
+WHERE section_id = 1
+-- GROUP BY section_id
+ORDER BY cnt DESC
+ LIMIT 10
+;

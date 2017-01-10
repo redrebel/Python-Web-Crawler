@@ -1,4 +1,4 @@
 http://code.tutsplus.com/posts.atom
-http://feeds.feedburner.com/JavaCodeGeeks
-http://feeds.dzone.com/java
-http://feeds.gawker.com/lifehacker/vip
+#http://feeds.feedburner.com/JavaCodeGeeks
+#http://feeds.dzone.com/java
+#http://feeds.gawker.com/lifehacker/vip

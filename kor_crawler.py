@@ -26,9 +26,10 @@ class KorCrawler(Scraping):
             self.proc_list(source_list, type=self.get_rss_post_content)
         elif source_type == 'EGLOOS':
             self.get_egloos_post_content("lennis", "6072774")
+        elif source_type == 'TEXT':
+            self.proc_list(source_list, type=self.proc_text_content)
         elif source_type == 'HTML':
             pass
-
 
     def set_knlpy(self):
         """
@@ -102,9 +103,6 @@ class KorCrawler(Scraping):
         data = self.get_sorted_data(output)
         self.save_csv(data)
         self.save_kor_db(data)
-
-
-        # print(content)
 
 
 if __name__ == "__main__":

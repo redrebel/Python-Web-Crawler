@@ -50,6 +50,8 @@ class Scraping:
         return time.strftime("%Y%m%d%H%M", time.localtime())
 
     def filter_word(self, word):
+        if len(word) < 2: return False
+        if len(word) > 64: return False
         if bool(re.search('\\d', word)) is True: return False
         if word in self.filter_words: return False
         return True
@@ -96,7 +98,7 @@ class Scraping:
         soup = BeautifulSoup(response, 'lxml')
         # print("soup : ", soup)
         text_parts = soup.findAll(text=True)
-        print(text_parts)
+        print('RSS:',text_parts)
 
         return text_parts
 
@@ -122,6 +124,9 @@ class Scraping:
 
             text = type(line, stamp)
             text = self.clearInput(text)
+
+            print('text : [', text,']')
+
             self.scrap(text)
 
     def html2text(self, html):
@@ -138,11 +143,15 @@ class Scraping:
         return text_parts
 
     def clean_word(self, word):
+        # Remove all the HTML tags
+        word = re.compile(r'<[^>]+>').sub('', word)
         word = re.sub('\n', "", word)
         word = re.sub(' +', " ", word)
         word = re.sub(']]>', "", word)
         word = re.sub('http[^ ]*', "", word)
-
+        word = re.sub('&gt*', "", word)
+        word = re.sub('&lt*', "", word)
+        word = word.strip()
         return word
 
     def clearInput(self, text):

@@ -89,6 +89,7 @@ class EngCrawler(Scraping):
         print(text.feed.title, count)
         writer.save_eng_db(count, self.section_id)
 
+
     def scrap(self, text):
         '''
         자연어처리를 통하여 명사만 처리한다
@@ -101,15 +102,7 @@ class EngCrawler(Scraping):
         output = {}
         # Loop over all the entries
         for content in text:
-            # print e
-            # Extract a list of words
-            # Remove all the HTML tags
-            # print('before txt : ', content)
-            content = re.compile(r'<[^>]+>').sub('', content)
-            content = self.clean_word(content)
-            content = content.strip()
-            # content = re.sub(' +', '', content)
-            print('after : [', content,']')
+
             # txt.append(content)
             # content = self.clearInput(content)
             sentences = sent_tokenize(content)

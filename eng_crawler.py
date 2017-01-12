@@ -113,7 +113,7 @@ class EngCrawler(Scraping):
                 for word in taggedWords:
                     if word[1] in nouns and self.filter_word(word[0]):
 
-                        temp = word[0]
+                        temp = word[0].lower()
                         # print(temp)
                         if temp not in output:
                             output[temp] = 0

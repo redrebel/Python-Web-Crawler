@@ -116,7 +116,7 @@ class Scraping:
         :param source_list:
         :return:
         """
-        i = -1;
+        i = -1
         for line in source_list:
             print(line)
             i += 1

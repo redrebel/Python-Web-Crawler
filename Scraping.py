@@ -187,4 +187,6 @@ if __name__ == "__main__":
     # get_rss_post_content(url)
     # set_section_id(2)
 
-    d = feedparser.parse('http://code.tutsplus.com/posts.atom')
+    #d = feedparser.parse('http://code.tutsplus.com/posts.atom')
+    Scraping.filter_words = "i'm"
+    print(Scraping.filter_word(Scraping, "I'm"))

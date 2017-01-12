@@ -111,18 +111,19 @@ class EngCrawler(Scraping):
                 taggedWords = pos_tag(word_tokenize(sentence))
 
                 for word in taggedWords:
-                    if word[1] in nouns and self.filter_word(word[0]):
+                    keyword = word[0].lower()
+                    tag = word[1]
+                    if tag in nouns and self.filter_word(keyword):
 
-                        temp = word[0].lower()
                         # print(temp)
-                        if temp not in output:
-                            output[temp] = 0
-                        output[temp] += 1
+                        if keyword not in output:
+                            output[keyword] = 0
+                        output[keyword] += 1
 
-        print(text[0], output)
+        #print(text[0], output)
         output = self.get_sorted_data(output)
         self.save_csv(output)
-        self.save_eng_db(output)
+        #self.save_eng_db(output)
 
 
 def main():

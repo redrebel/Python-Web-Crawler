@@ -1,1 +1,10 @@
-./source_list/ENG/text/01.txt
+#./source_list/ENG/text/FASHION.eng_01.txt
+#./source_list/ENG/text/FASHION.eng_02.txt
+#./source_list/ENG/text/FASHION.eng_03.txt
+./source_list/ENG/text/FASHION.eng_04.txt
+./source_list/ENG/text/FASHION.eng_05.txt
+./source_list/ENG/text/FASHION.eng_06.txt
+./source_list/ENG/text/FASHION.eng_07.txt
+./source_list/ENG/text/FASHION.eng_08.txt
+./source_list/ENG/text/FASHION.eng_09.txt
+./source_list/ENG/text/FASHION.eng_10.txt

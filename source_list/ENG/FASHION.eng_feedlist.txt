@@ -1,2 +1,3 @@
-http://www.gq.com/services/rss/feeds/latest.xml
+#http://www.gq.com/services/rss/feeds/latest.xml
 
+http://thefashionguitar.com/feed/

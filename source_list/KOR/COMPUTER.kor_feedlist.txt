@@ -3,3 +3,13 @@
 #http://blog.cjred.net/rss/3
 #http://blog.cjred.net/rss/4
 http://blog.cjred.net/rss/5
+http://blog.cjred.net/rss/7
+http://blog.cjred.net/rss/8
+http://blog.cjred.net/rss/9
+http://blog.cjred.net/rss/10
+http://blog.cjred.net/rss/11
+http://blog.cjred.net/rss/12
+http://blog.cjred.net/rss/13
+http://blog.cjred.net/rss/14
+http://blog.cjred.net/rss/15
+http://blog.cjred.net/rss/16

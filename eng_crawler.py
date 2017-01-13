@@ -123,7 +123,7 @@ class EngCrawler(Scraping):
         #print(text[0], output)
         output = self.get_sorted_data(output)
         self.save_csv(output)
-        #self.save_eng_db(output)
+        self.save_eng_db(output)
 
 
 def main():

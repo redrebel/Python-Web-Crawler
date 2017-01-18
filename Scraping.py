@@ -63,7 +63,7 @@ class Scraping:
                 if line[0] != '#' and line != '\n': _filter_words.append(line.strip())
 
         self.filter_words = _filter_words
-        print(self.filter_words)
+        logger.debug('Filter words : %s', self.filter_words)
 
     def get_feed_post_content(self, rss_url, stamp):
         self.save_file_name = self.section_id_padding + ".rss."+stamp
@@ -126,8 +126,12 @@ class Scraping:
             text = self.clearInput(text)
 
             print('text : [', text,']')
-
-            self.scrap(text)
+            self.save_txt(text)
+            startTime = time.time()
+            data = self.scrap(text)
+            checkTime = time.time() - startTime
+            print("time : ", checkTime)
+            self.save_csv(data)
 
     def html2text(self, html):
         soup = BeautifulSoup(html, "html.parser")

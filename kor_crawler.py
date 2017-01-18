@@ -69,8 +69,7 @@ class KorCrawler(Scraping):
         return word
 
     def scrap(self, text):
-        startTime = time.time()
-        self.save_txt(text)
+
         output = {}
 
         for p in text:
@@ -96,14 +95,10 @@ class KorCrawler(Scraping):
                     output[temp] = 0
                 output[temp] += 1
 
-        checkTime = time.time() - startTime
-        print("time : ", checkTime)
-
         print("output :", output)
         data = self.get_sorted_data(output)
-        self.save_csv(data)
         self.save_kor_db(data)
-
+        return data
 
 if __name__ == "__main__":
 

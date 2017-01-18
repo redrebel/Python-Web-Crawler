@@ -27,6 +27,7 @@ def set_logger():
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
+    stamp = time.strftime("%Y%m%d", time.localtime())
     file_handler = logging.FileHandler("logs/scraping."+stamp+".log")
     stream_handler = logging.StreamHandler()
 
@@ -53,7 +54,8 @@ def main():
     Config.load('config.conf')
     section_id = dao.get_section_id(Config.section)
     source_list = get_source_list(Config.file_path)
-    print('mode : ', Config.mode)
+    logger.info('Crawling Start! mode : %s\n', Config.mode)
+    start_timestamp = time.time()
     if Config.mode == 'KOR':
         cl = KorCrawler()
         cl.proc(section_id, Config.source_type, source_list)
@@ -62,6 +64,9 @@ def main():
         cl.proc(section_id, Config.source_type, source_list)
     else:
         print('unknown language.')
+
+    work_time = time.time() - start_timestamp
+    logger.info("Work Time is : %f", work_time)
 
 
 if __name__ == "__main__":

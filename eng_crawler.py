@@ -96,7 +96,7 @@ class EngCrawler(Scraping):
         :param text:
         :return:
         '''
-        self.save_txt(text)
+
         nouns = ['NN', 'NNS', 'NNP', 'NNPS']
 
         output = {}
@@ -121,9 +121,10 @@ class EngCrawler(Scraping):
                         output[keyword] += 1
 
         #print(text[0], output)
+
         output = self.get_sorted_data(output)
-        self.save_csv(output)
         self.save_eng_db(output)
+        return output
 
 
 def main():
